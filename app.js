@@ -69,7 +69,7 @@ function authentication(request, response, next) {
 }
 //POST
 
-app.post('/login/', async (request, response) => {
+app.post("/login/", async (request, response) => {
   const {username, password} = request.body
   const api1 = `
   SELECT 
@@ -85,9 +85,9 @@ app.post('/login/', async (request, response) => {
   } else {
     const isPass = await bcrypt.compare(password, dbUser.password)
     if (isPass == true) {
-      const payload = {username: username}
+      const payload = {username: username,}
       const jwtToken = jwt.sign(payload, 'MY_SECRET_TOKEN')
-      
+
       response.send({jwtToken})
     } else {
       response.status(400)
@@ -117,7 +117,7 @@ app.get('/states/:stateId/', authentication, async (request, response) => {
   FROM 
   state 
   WHERE
-  state_id = '${stateId}';`
+  state_id = ${stateId};`
   const stateInfo = await db.get(api3)
   response.send(convertStateDbToResponse(stateInfo))
 })
@@ -133,7 +133,7 @@ app.get(
   FROM 
   district 
   WHERE
-  district_id = '${districtId}';`
+  district_id = ${districtId};`
     const distInfo = await db.get(api4)
     response.send(convertDistDbToResponse(distInfo))
   },
@@ -147,7 +147,7 @@ app.post('/districts/', authentication, async (request, response) => {
     district 
     (state_id, district_name, cases, cured, active, deaths)
     VALUES
-    (${stateId},${districtName},${cases},${cured},${active},${deaths});
+    (${stateId},'${districtName}',${cases},${cured},${active},${deaths});
     `
   await db.run(api5)
   response.send('District Successfully Added')
@@ -180,7 +180,7 @@ app.put(
   district
   SET 
   state_id = ${stateId},
-  district_name = ${districtName},
+  district_name = '${districtName}',
   cases = ${cases},
   cured = ${cured},
   active = ${active},
