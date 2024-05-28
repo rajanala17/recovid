@@ -69,7 +69,7 @@ function authentication(request, response, next) {
 }
 //POST
 
-app.post("/login/", async (request, response) => {
+app.post('/login/', async (request, response) => {
   const {username, password} = request.body
   const api1 = `
   SELECT 
@@ -85,13 +85,13 @@ app.post("/login/", async (request, response) => {
   } else {
     const isPass = await bcrypt.compare(password, dbUser.password)
     if (isPass == true) {
-      const payload = {username: username,}
+      const payload = {username: username}
       const jwtToken = jwt.sign(payload, 'MY_SECRET_TOKEN')
 
       response.send({jwtToken})
     } else {
       response.status(400)
-      response.send('Invalid Password')
+      response.send('Invalid password')
     }
   }
 })
@@ -186,8 +186,10 @@ app.put(
   active = ${active},
   deaths = ${deaths}
   WHERE
-  disrict_id = ${districtId};
-  `
+  disrict_id = ${districtId};`
+  await db.run(api7)
+  response.send("District Details Updated")
+  })
     app.get(
       '/states/:stateId/stats/',
       authentication,
@@ -212,6 +214,4 @@ app.put(
         })
       },
     )
-  },
-)
 module.exports = app
